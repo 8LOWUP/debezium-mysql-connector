@@ -1,0 +1,26 @@
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle build directory
+# Gradle이 빌드 결과를 생성하는 기본 폴더입니다.
+# 여기에 커넥터 JAR 파일이 포함되므로 Git에 올리지 않습니다.
+/build/
+.gradle/
+
+# 빌드 결과물
+# Gradle이 생성하는 최종 JAR 파일들을 제외합니다.
+*.jar
+*.class
+*.war
+*.zip
+
+# Operating System files
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Environment variable files
+# 민감한 정보(비밀번호 등)를 담은 환경 변수 파일을 Git에서 제외합니다.
+.env
