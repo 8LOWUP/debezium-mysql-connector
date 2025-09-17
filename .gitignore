@@ -24,3 +24,6 @@ Thumbs.db # Windows
 # Environment variable files
 # 민감한 정보(비밀번호 등)를 담은 환경 변수 파일을 Git에서 제외합니다.
 .env
+
+db-data/
+
