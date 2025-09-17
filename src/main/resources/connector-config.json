@@ -9,7 +9,7 @@
     "database.password": "${MYSQL_PASSWORD}",
     "database.server.id": "184054",
     "database.server.name": "mysql-cdc",
-    "topic.prefix": "mysql-mymcp-events",
+    "topic.prefix": "mysql-events",
     "database.include.list": "inventory",
     "table.include.list": "inventory.member_mcp,inventory.mcp",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
