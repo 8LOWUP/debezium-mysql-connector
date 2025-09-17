@@ -1,0 +1,36 @@
+// Java와 Gradle의 기본 기능을 사용하기 위한 플러그인
+plugins {
+    id 'java'
+}
+
+// 프로젝트의 그룹 ID와 버전 정보 설정
+group 'com.mycompany.debezium'
+version '1.0.0-SNAPSHOT'
+
+// 의존성을 다운로드할 저장소 (Maven Central은 기본 저장소)
+repositories {
+    mavenCentral()
+}
+
+// 프로젝트에 필요한 의존성 목록
+dependencies {
+    // Debezium MySQL 커넥터 플러그인 의존성
+    // 이 의존성을 통해 Debezium의 기능을 사용할 수 있습니다.
+    implementation 'io.debezium:debezium-connector-mysql:2.5.0.Final'
+
+    // Kafka Connect API 의존성
+    // 커넥터 개발에 필요한 기본 API를 제공합니다.
+    implementation 'org.apache.kafka:connect-api:3.5.0'
+}
+
+// 빌드 시 모든 의존성을 포함하는 JAR 파일을 생성하기 위한 설정
+jar {
+    // 중복 파일을 무시하도록 설정합니다.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    // 모든 의존성 JAR 파일을 합쳐서 하나의 실행 가능한 JAR 파일로 만듭니다.
+    // 이렇게 만들어진 JAR 파일이 Kafka Connect의 '플러그인'이 됩니다.
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

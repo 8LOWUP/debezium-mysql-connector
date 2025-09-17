@@ -1,0 +1,19 @@
+# Confluent Kafka Connect 기본 이미지 사용
+FROM confluentinc/cp-kafka-connect:7.4.0
+
+# root 권한 얻기
+USER root
+
+# 플러그인 설치 경로
+ENV CONNECT_PLUGIN_PATH=/opt/kafka-plugins
+
+# 플러그인 디렉토리 + 필요한 유틸 설치
+RUN mkdir -p /opt/kafka-plugins && \
+    yum install -y curl jq gettext && \
+    curl -L https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.7.0.Final/debezium-connector-mysql-2.7.0.Final-plugin.tar.gz \
+    -o /tmp/debezium-mysql.tar.gz && \
+    tar -xvf /tmp/debezium-mysql.tar.gz -C /opt/kafka-plugins && \
+    rm /tmp/debezium-mysql.tar.gz && \
+    chown -R appuser:appuser /opt/kafka-plugins
+
+USER appuser
