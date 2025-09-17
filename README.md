@@ -1,4 +1,4 @@
-# 📄 Debezium MySQL Connector 설정 가이드
+# Debezium MySQL Connector 설정 가이드
 
 이 파일은 Kafka Connect에 등록할 **MySQL CDC(변경 데이터 캡처) 커넥터**의 설정입니다.
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 🔑 주요 필드 설명
+## 주요 필드 설명
 
 ```json
 {
@@ -116,7 +116,7 @@
 
 ---
 
-## ⚙️ 실무에서 자주 바꾸는 항목
+## 실무에서 자주 바꾸는 항목
 
 1. **MySQL 연결**
     - `database.hostname`, `database.user`, `database.password` → 클라우드 DB 환경에 맞게 변경
@@ -128,7 +128,7 @@
 
 ---
 
-## 🚀 워크플로우 (IaC 관점)
+## 워크플로우 (IaC 관점)
 
 1. Git에서 `connector-config.json` 수정 후 PR → Merge
 2. CI/CD 파이프라인이 Connect 워커에 `PUT /connectors/my-mysql-cdc-connector/config` 실행 → 변경 반영
