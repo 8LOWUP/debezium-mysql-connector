@@ -4,10 +4,10 @@
     "connector.class": "io.debezium.connector.mysql.MySqlConnector",
     "tasks.max": "1",
 
-    "database.hostname": "${MYSQL_HOST}",
+    "database.hostname": "mysql",
     "database.port": "3306",
-    "database.user": "${MYSQL_USER}",
-    "database.password": "${MYSQL_PASSWORD}",
+    "database.user": "my_db_user",
+    "database.password": "my_db_password",
 
     "database.server.id": "184054",
     "database.server.name": "mysql-cdc",
@@ -19,6 +19,11 @@
 
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
     "schema.history.internal.kafka.topic": "schema-history-db-events",
+
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.delete.handling.mode": "drop",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",

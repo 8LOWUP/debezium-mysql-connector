@@ -4,7 +4,7 @@
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
     "topics": "mysql-events.inventory.member_mcp",
     "connection.uri": "mongodb://my_mongo_user:my_mongo_password@mongo:27017/my_mongo_db?authSource=admin",
-    "database": "${MONGO_DATABASE}",
+    "database": "my_mongo_db",
     "collection": "member_mcp",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
@@ -16,6 +16,12 @@
     "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
     "document.id.strategy.partial.value.projection.list": "id",
     "document.id.strategy.partial.value.projection.type": "AllowList",
+
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.delete.handling.mode": "drop",
+
 
     "value.projection.type": "BlockList",
     "value.projection.list": "mcp_token"
