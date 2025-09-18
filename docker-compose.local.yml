@@ -51,7 +51,11 @@ services:
       - kafka
       - mysql
     volumes:
+      # Source Connector
       - ./src/main/resources/connector-config.json:/etc/kafka-connect/connector-config.json
+      # Mongo Sink Connector
+      - ./src/main/resources/mongo-sink-config.json:/etc/kafka-connect/mongo-sink-config.json
+      # 등록 스크립트
       - ./scripts/register-connector.sh:/scripts/register-connector.sh
 
   mysql:
@@ -75,3 +79,12 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db
+
