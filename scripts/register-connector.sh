@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONNECT_URL="http://connect:8083" # todo 배포용으로 수정 필요, env로 받기
+CONNECT_URL="http://localhost:8083" # todo 배포용으로 수정 필요, env로 받기
 
 # 커넥터 등록 함수
 register_connector() {

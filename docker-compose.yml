@@ -35,7 +35,7 @@ services:
     env_file:
       - .env
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka:9092 # todo 배포용 컴포즈 만들 때는 수정 필요
+      CONNECT_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS} # todo 배포용 컴포즈 만들 때는 수정 필요
       CONNECT_GROUP_ID: cg-my-connector
       CONNECT_CONFIG_STORAGE_TOPIC: kafka-connect-configs
       CONNECT_OFFSET_STORAGE_TOPIC: kafka-connect-offsets
@@ -55,8 +55,6 @@ services:
       - ./src/main/resources/connector-config.json:/etc/kafka-connect/connector-config.json
       # Mongo Sink Connector
       - ./src/main/resources/mongo-sink-config.json:/etc/kafka-connect/mongo-sink-config.json
-      # 등록 스크립트
-      - ./scripts/register-connector.sh:/scripts/register-connector.sh
 
   mysql:
     image: mysql:8.0
@@ -85,6 +83,10 @@ services:
     container_name: mongo
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: my_mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: my_mongo_password
+      MONGO_INITDB_DATABASE: my_mongo_db
     volumes:
       - ./mongo-data:/data/db
 
