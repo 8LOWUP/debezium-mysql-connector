@@ -1,0 +1,12 @@
+{
+  "name": "mongo-sink",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    "topics": "mysql-mymcp-events.inventory.member_mcp",
+    "connection.uri": "mongodb://mongo:27017",
+    "database": "inventory",
+    "collection": "member_mcp",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+  }
+}
