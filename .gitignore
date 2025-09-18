@@ -26,4 +26,4 @@ Thumbs.db # Windows
 .env
 
 db-data/
-
+mongo-data/
