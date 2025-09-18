@@ -2,11 +2,23 @@
   "name": "mongo-sink",
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
-    "topics": "mysql-mymcp-events.inventory.member_mcp",
+    "topics": "mysql-events.inventory.member_mcp",
     "connection.uri": "mongodb://mongo:27017",
     "database": "inventory",
     "collection": "member_mcp",
+
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+
+    "value.converter.schemas.enable": "true",
+    "key.converter.schemas.enable": "true",
+
+    "change.data.capture.handler": "com.mongodb.kafka.connect.sink.cdc.debezium.mongodb.ReplaceOneBusinessKeyHandler",
+
+    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
+    "document.id.strategy.partial.value.projection.list": "id",
+    "document.id.strategy.partial.value.projection.type": "AllowList",
+
+    "delete.on.null.values": "true"
   }
 }
