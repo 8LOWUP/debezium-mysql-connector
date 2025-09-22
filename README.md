@@ -1,12 +1,38 @@
+# IaC 워크플로우
 
+Kafka Connect 커넥터 설정은 Git으로 관리되며, 테이블 추가/변경 시 IaC 방식으로 JSON 파일을 수정하고 배포합니다.
 
+---
 
-## IaC 워크플로우
+## 워크플로우 단계
 
-1. **MySQL에 새로운 테이블 추가**: `inventory.new_table`을 추가했다고 가정합니다.
-2. **소스 커넥터 설정 수정**: `debezium-mysql-source.json` 파일을 열어 `table.include.list`에 새로운 테이블명을 추가합니다.
-    - `"table.include.list": "inventory.member_mcp,inventory.mcp,inventory.new_table"`
-3. **싱크 커넥터 설정 수정**: `mongo-sink.json` 파일을 열어 `topics`와 `topic.to.collection.map` (사용하는 경우)을 수정합니다.
-    - `"topics": "mysql-events.inventory.member_mcp,mysql-events.inventory.mcp,mysql-events.inventory.new_table"`
-    - `"topic.to.collection.map": "{\"...\":\"...\", \"mysql-events.inventory.new_table\":\"new_table\"}"`
-4. **Git으로 관리**: 수정된 JSON 파일들을 커밋하고 푸시합니다.
+1. **MySQL에 새로운 테이블 추가**
+   - 예: `inventory.new_table` 추가
+2. **소스 커넥터 설정 수정** (`debezium-mysql-source.json`)
+   - CDC 대상 테이블 목록에 새로운 테이블을 추가
+
+    ```json
+    "table.include.list": "inventory.member_mcp,inventory.mcp,inventory.new_table"
+    
+    ```
+
+3. **싱크 커넥터 설정 수정** (`mongo-sink.json`)
+   - `topics` 항목에 새로운 테이블의 CDC 토픽 추가
+   - 필요 시 `topic.to.collection.map` 도 함께 수정 (토픽 ↔ 컬렉션 매핑)
+
+    ```json
+    "topics": "mysql-events.inventory.member_mcp,mysql-events.inventory.mcp,mysql-events.inventory.new_table",
+    "topic.to.collection.map": "{\"mysql-events.inventory.member_mcp\":\"member_mcp\", \"mysql-events.inventory.mcp\":\"mcp\", \"mysql-events.inventory.new_table\":\"new_table\"}"
+    
+    ```
+
+4. **Git으로 관리**
+   - 수정된 JSON 파일들을 Git에 커밋 후 푸시
+   - 배포 파이프라인(IaC 자동화)이 이를 감지하여 Kafka Connect 설정을 자동 반영
+
+---
+
+## 참고 문서
+- [MySQL Source Connector 설정 가이드](./docs/MySQL%20Source%20Connector%20설정%20가이드.md)
+- [MongoDB Sink Connector 설정 가이드](./docs/MongoDB%20Sink%20Connector%20설정%20가이드.md)
+
