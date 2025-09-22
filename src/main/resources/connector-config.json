@@ -23,7 +23,7 @@
     "transforms": "unwrap",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.drop.tombstones": "true",
-    "transforms.unwrap.delete.handling.mode": "drop",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",
