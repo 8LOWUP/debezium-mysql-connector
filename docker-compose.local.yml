@@ -51,7 +51,7 @@ services:
       - kafka
       - mysql
     volumes:
-      - ./src/main/resources/connector-config.json:/etc/kafka-connect/connector-config.json
+      - ./configs/connector-config.json:/etc/kafka-connect/connector-config.json
       - ./scripts/register-connector.sh:/scripts/register-connector.sh
 
   mysql:
