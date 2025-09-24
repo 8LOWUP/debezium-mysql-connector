@@ -50,6 +50,7 @@ services:
     depends_on:
       - kafka
       - mysql
+      - mongodb
     volumes:
       # Source Connector
       - ./configs/connector-config.json:/etc/kafka-connect/connector-config.json
@@ -63,7 +64,7 @@ services:
       - 3301:3306
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: inventory
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     command:
@@ -78,15 +79,15 @@ services:
       timeout: 20s
       retries: 10
 
-  mongo:
+  mongodb:
     image: mongo:6.0
-    container_name: mongo
+    container_name: mongodb
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: my_mongo_user
-      MONGO_INITDB_ROOT_PASSWORD: my_mongo_password
-      MONGO_INITDB_DATABASE: my_mongo_db
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     volumes:
       - ./mongo-data:/data/db
 
