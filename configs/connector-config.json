@@ -4,26 +4,30 @@
     "connector.class": "io.debezium.connector.mysql.MySqlConnector",
     "tasks.max": "1",
 
-    "database.hostname": "mysql",
-    "database.port": "3306",
-    "database.user": "my_db_user",
-    "database.password": "my_db_password",
+    "database.hostname": "${MYSQL_HOST}",
+    "database.port": "${MYSQL_PORT}",
+    "database.user": "${MYSQL_USER}",
+    "database.password": "${MYSQL_PASSWORD}",
 
     "database.server.id": "184054",
     "database.server.name": "mysql-cdc",
 
-    "database.include.list": "inventory",
-    "table.include.list": "inventory.member_mcp,inventory.mcp",
+    "database.include.list": "${MYSQL_DATABASE}",
+    "table.include.list": "${MYSQL_DATABASE}.user_mcp",
 
-    "topic.prefix": "mysql-events",
-
-    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+    "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
     "schema.history.internal.kafka.topic": "schema-history-db-events",
 
-    "transforms": "unwrap",
+    "transforms": "unwrap,dropUpdates",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.add.fields": "op",
     "transforms.unwrap.drop.tombstones": "true",
     "transforms.unwrap.delete.handling.mode": "rewrite",
+
+    "transforms.dropUpdates.type": "io.debezium.transforms.Filter",
+    "transforms.dropUpdates.language": "jsr223.groovy",
+    "transforms.dropUpdates.condition": "value != null && value.op == 'u'",
+    "transforms.dropUpdates.exclude": "true",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",
