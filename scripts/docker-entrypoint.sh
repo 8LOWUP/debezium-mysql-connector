@@ -1,12 +1,14 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# 1. Kafka Connect 프로세스 실행 (백그라운드)
-echo "Starting Kafka Connect..."
-/etc/confluent/docker/run &
+# 1) Kafka Connect 기동
+echo "[entrypoint] Starting Kafka Connect..."
+/etc/confluent/docker/run &   # 백그라운드
+CONNECT_PID=$!
 
-# 2. Connect REST API 뜰 때까지 기다렸다가 등록 스크립트 실행
-/scripts/register-connector.sh
+# 2) 커넥터 등록
+echo "[entrypoint] Registering connectors..."
+/scripts/register-connector.sh || { echo "[entrypoint] registration failed"; kill $CONNECT_PID; exit 1; }
 
-# 3. Kafka Connect 프로세스가 종료될 때까지 대기
-wait -n
+# 3) Connect 프로세스 대기
+wait $CONNECT_PID

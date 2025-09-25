@@ -33,7 +33,7 @@ services:
     ports:
       - 8083:8083
     env_file:
-      - .env
+      - ./dev.env
     environment:
       CONNECT_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS} # todo 배포용 컴포즈 만들 때는 수정 필요
       CONNECT_GROUP_ID: cg-my-connector
@@ -47,6 +47,11 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+
+      # (선택) register 스크립트용 변수
+      CONNECT_URL: http://localhost:8083
+      DEV_ENV_PATH: /etc/dev.env
+
     depends_on:
       - kafka
       - mysql
@@ -56,6 +61,7 @@ services:
       - ./configs/connector-config.json:/etc/kafka-connect/connector-config.json
       # Mongo Sink Connector
       - ./configs/mongo-sink-config.json:/etc/kafka-connect/mongo-sink-config.json
+      - ./dev.env:/etc/dev.env:ro
 
   mysql:
     image: mysql:8.0
