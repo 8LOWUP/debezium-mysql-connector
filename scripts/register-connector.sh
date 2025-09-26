@@ -3,12 +3,12 @@ set -euo pipefail
 
 # 0) 환경
 CONNECT_URL="${CONNECT_URL:-http://localhost:8083}"   # env 로 덮어쓰기 가능
-DEV_ENV_PATH="${DEV_ENV_PATH:-/etc/dev.env}"          # 선택: dev.env 마운트시 자동 소싱
+ENV_PATH="${ENV_PATH:-/etc/local.env}"
 
-# 1) dev.env 를 별도로 마운트했다면 로드 (compose에 env_file만 쓰면 불필요)
-if [ -f "$DEV_ENV_PATH" ]; then
-  echo "[register] Sourcing $DEV_ENV_PATH"
-  set -a; . "$DEV_ENV_PATH"; set +a
+# 1) .env 를 별도로 마운트했다면 로드 (compose에 env_file만 쓰면 불필요)
+if [ -f "$ENV_PATH" ]; then
+  echo "[register] Sourcing $ENV_PATH"
+  set -a; . "$ENV_PATH"; set +a
 fi
 
 echo "[register] Using CONNECT_URL=$CONNECT_URL"

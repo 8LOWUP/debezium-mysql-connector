@@ -5,8 +5,8 @@
 
     "topics": "mysql-cdc.${MYSQL_DATABASE}.user_mcp",
 
-    "connection.uri": "mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27017/${MONGO_DATABASE}?authSource=admin",
-    "database": "${MONGO_DATABASE}",
+    "connection.uri": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:27017/${MONGODB_DATABASE}?authSource=admin",
+    "database": "${MONGODB_DATABASE}",
     "collection": "userMcp",
 
     "deletes.enabled": "true",

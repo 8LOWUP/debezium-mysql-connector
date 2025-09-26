@@ -5,7 +5,7 @@
     "tasks.max": "1",
 
     "database.hostname": "${MYSQL_HOST}",
-    "database.port": "${MYSQL_PORT}",
+    "database.port": "${MYSQL_INNER_PORT}",
     "database.user": "${MYSQL_USER}",
     "database.password": "${MYSQL_PASSWORD}",
 
@@ -25,9 +25,8 @@
     "transforms.unwrap.delete.handling.mode": "rewrite",
 
     "transforms.dropUpdates.type": "io.debezium.transforms.Filter",
-    "transforms.dropUpdates.language": "jsr223.groovy",
-    "transforms.dropUpdates.condition": "value != null && value.op == 'u'",
-    "transforms.dropUpdates.exclude": "true",
+    "transforms.dropUpdates.language": "juel",
+    "transforms.dropUpdates.condition": "value.op == 'u'",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",

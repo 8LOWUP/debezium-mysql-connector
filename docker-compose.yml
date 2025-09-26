@@ -1,5 +1,23 @@
 version: '3.7'
 services:
+  mysql:
+    container_name: mysql-mcp-market-local
+    image: mysql:8.0
+    ports:
+      - target: ${MYSQL_INNER_PORT}
+        published: ${MYSQL_OUTER_PORT}
+        protocol: tcp
+        host_ip: 0.0.0.0
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      mm_local_network:
+        ipv4_address: ${NETWORK_MYSQL_IP}
+    restart: always
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
@@ -7,25 +25,61 @@ services:
       - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - mm_local_network
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     container_name: kafka
     ports:
-      - 9092:9092
+      - 9092:9092     # 도커 내부
+      - 29092:29092   # 로컬에서 접속
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     depends_on:
       - zookeeper
+    networks:
+      - mm_local_network
+
+  redis:
+    container_name: redis-mcp-market-local
+    image: redis:latest
+    ports:
+      - target: ${REDIS_INNER_PORT}
+        published: ${REDIS_OUTER_PORT}
+        protocol: tcp
+        host_ip: 0.0.0.0
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      mm_local_network:
+        ipv4_address: ${NETWORK_REDIS_IP}
+    restart: always
+
+  mongodb:
+    container_name: mongodb-mcp-market-local
+    image: mongo:latest
+    ports:
+      - target: ${MONGODB_INNER_PORT}
+        published: ${MONGODB_OUTER_PORT}
+        protocol: tcp
+        host_ip: 0.0.0.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_DATABASE}
+    networks:
+      mm_local_network:
+       ipv4_address: ${NETWORK_MONGODB_IP}
+    restart: always
 
   connect:
-   # image: my-registry/kafka-connect:2.7.0   # 우리가 빌드한 이미지 사용
+    # image: my-registry/kafka-connect:2.7.0   # 우리가 빌드한 이미지 사용
     build:
       context: .          # 현재 디렉토리의 Dockerfile 사용
       dockerfile: Dockerfile
@@ -33,7 +87,7 @@ services:
     ports:
       - 8083:8083
     env_file:
-      - ./dev.env
+      - ./local.env
     environment:
       CONNECT_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS} # todo 배포용 컴포즈 만들 때는 수정 필요
       CONNECT_GROUP_ID: cg-my-connector
@@ -50,7 +104,7 @@ services:
 
       # (선택) register 스크립트용 변수
       CONNECT_URL: http://localhost:8083
-      DEV_ENV_PATH: /etc/dev.env
+      DEV_ENV_PATH: /etc/local.env
 
     depends_on:
       - kafka
@@ -61,39 +115,19 @@ services:
       - ./configs/connector-config.json:/etc/kafka-connect/connector-config.json
       # Mongo Sink Connector
       - ./configs/mongo-sink-config.json:/etc/kafka-connect/mongo-sink-config.json
-      - ./dev.env:/etc/dev.env:ro
+      - ./local.env:/etc/local.env:ro
+    networks:
+      mm_local_network:
+        ipv4_address: ${NETWORK_KAFKA_CONNECT_IP}
 
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - 3301:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-      - --log-bin=mysql-bin
-      - --binlog-format=ROW
-      - --binlog-row-image=FULL
-      - --server-id=1
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-
-  mongodb:
-    image: mongo:6.0
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
-    volumes:
-      - ./mongo-data:/data/db
-
+networks:
+  mm_local_network:
+    name: mm_local_network
+    driver: bridge
+    internal: false
+    ipam:
+      driver: default
+      config:
+        - subnet: ${NETWORK_SUBNET}
+          ip_range: ${NETWORK_IP_RANGE}
+          gateway: ${NETWORK_GATEWAY}
