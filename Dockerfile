@@ -22,9 +22,23 @@ RUN mkdir -p /opt/kafka-plugins && \
     tar -xvf /tmp/debezium-mysql.tar.gz -C /opt/kafka-plugins && \
     rm /tmp/debezium-mysql.tar.gz && \
     \
+    # Debezium 스크립팅(Filter Transform) 모듈 추가 설치
+    curl -L https://repo1.maven.org/maven2/io/debezium/debezium-scripting/2.7.0.Final/debezium-scripting-2.7.0.Final.jar \
+        -o /opt/kafka-plugins/debezium-connector-mysql/debezium-scripting-2.7.0.Final.jar && \
+    \
+    # JUEL 스크립팅 엔진 설치 (Filter Transform 용)
+    mkdir -p /opt/kafka-plugins/juel-engine && \
+    curl -L https://repo1.maven.org/maven2/de/odysseus/juel/juel-api/2.2.7/juel-api-2.2.7.jar \
+        -o /opt/kafka-plugins/juel-engine/juel-api-2.2.7.jar && \
+    curl -L https://repo1.maven.org/maven2/de/odysseus/juel/juel-impl/2.2.7/juel-impl-2.2.7.jar \
+        -o /opt/kafka-plugins/juel-engine/juel-impl-2.2.7.jar && \
+    curl -L https://repo1.maven.org/maven2/de/odysseus/juel/juel-spi/2.2.7/juel-spi-2.2.7.jar \
+        -o /opt/kafka-plugins/juel-engine/juel-spi-2.2.7.jar && \
+    \
     # MongoDB Kafka Connector 설치 (1.15.0, uber JAR)
+    mkdir -p /opt/kafka-plugins/mongo-connector && \
     curl -L https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.15.0/mongo-kafka-connect-1.15.0-all.jar \
-        -o /opt/kafka-plugins/mongo-kafka-connect-1.15.0-all.jar
+        -o /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar
 
 
 USER appuser

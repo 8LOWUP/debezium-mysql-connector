@@ -43,12 +43,19 @@ register_connector() {
 
   # 5) REST API Ready 대기
   while true; do
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$CONNECT_URL/")
+    RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "$CONNECT_URL/")
+    HTTP_BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS:.*//g')
+    HTTP_CODE=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
     if [ "$HTTP_CODE" = "200" ]; then
       echo "[register] Kafka Connect REST API ready."
       break
     fi
     echo "[register] Waiting for Kafka Connect REST API (Status: $HTTP_CODE)..."
+    echo "  -> Status Code: $HTTP_CODE"
+    echo "  -> Response Body:"
+    echo "$HTTP_BODY"
+    echo "  -> Raw curl output:"
+    echo "$RESPONSE"
     sleep 3
   done
 
@@ -56,17 +63,37 @@ register_connector() {
   STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$CONNECT_URL/connectors/$CONNECTOR_NAME")
   if [ "$STATUS" = "200" ]; then
     echo "[register] Connector '$CONNECTOR_NAME' exists. Updating config via PUT..."
-    curl -s -X PUT -H "Content-Type: application/json" \
-      --data @"$TMP_FILE" \
-      "$CONNECT_URL/connectors/$CONNECTOR_NAME/config" \
-      | jq '.name,.config|keys' || true
+    RESPONSE=$(jq '.config' "$TMP_FILE" | curl -s -w "\n%{http_code}" -X PUT -H "Content-Type: application/json" \
+      --data @- \
+      "$CONNECT_URL/connectors/$CONNECTOR_NAME/config")
+    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+    HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+
+    if [[ "$HTTP_CODE" =~ ^2 ]]; then
+      echo "[register] Connector config updated successfully."
+      echo "$HTTP_BODY" | jq '.name,.config|keys' || true
+    else
+      echo "[ERROR] Failed to update connector. Kafka Connect returned status $HTTP_CODE."
+      echo "[ERROR] Response: $HTTP_BODY"
+      exit 1
+    fi
     echo "[register] Update request sent."
   else
     echo "[register] Creating connector '$CONNECTOR_NAME' via POST..."
-    curl -s -X POST -H "Content-Type: application/json" \
+    RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" \
       --data @"$TMP_FILE" \
-      "$CONNECT_URL/connectors" \
-      | jq '.name,.config|keys' || true
+      "$CONNECT_URL/connectors")
+    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+    HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+
+    if [[ "$HTTP_CODE" =~ ^2 ]]; then
+      echo "[register] Connector created successfully."
+      echo "$HTTP_BODY" | jq '.name,.config|keys' || true
+    else
+      echo "[ERROR] Failed to create connector. Kafka Connect returned status $HTTP_CODE."
+      echo "[ERROR] Response: $HTTP_BODY"
+      exit 1
+    fi
     echo "[register] Create request sent."
   fi
 }

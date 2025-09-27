@@ -2,30 +2,23 @@
   "name": "mongo-sink",
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
-
     "topics": "mysql-cdc.${MYSQL_DATABASE}.user_mcp",
-
     "connection.uri": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:27017/${MONGODB_DATABASE}?authSource=admin",
     "database": "${MONGODB_DATABASE}",
     "collection": "userMcp",
-
     "deletes.enabled": "true",
-
     "post.processor.chain": "com.mongodb.kafka.connect.sink.processor.DocumentIdAdder",
     "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
     "document.id.strategy.partial.value.projection.type": "AllowList",
     "document.id.strategy.partial.value.projection.list": "userId,mcpId",
-
     "transforms": "cast,rename,only",
-    "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast$Value",
+    "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast\$Value",
     "transforms.cast.spec": "user_id:string,mcp_id:string,platform_id:string",
-    "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField\$Value",
     "transforms.rename.renames": "user_id:userId,mcp_id:mcpId,platform_id:platformId",
-    "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField\$Value",
     "transforms.only.whitelist": "userId,mcpId,platformId,__deleted,op",
-
     "writemodel.strategy": "com.mongodb.kafka.connect.sink.writemodel.strategy.ReplaceOneDefaultStrategy",
-
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
