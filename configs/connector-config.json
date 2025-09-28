@@ -18,15 +18,11 @@
     "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
     "schema.history.internal.kafka.topic": "schema-history-db-events",
 
-    "transforms": "unwrap,dropUpdates",
+    "transforms": "unwrap",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.add.fields": "op",
     "transforms.unwrap.drop.tombstones": "true",
     "transforms.unwrap.delete.handling.mode": "rewrite",
-
-    "transforms.dropUpdates.type": "io.debezium.transforms.Filter",
-    "transforms.dropUpdates.language": "jsr223.juel",
-    "transforms.dropUpdates.condition": "value.op == 'u'",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",
