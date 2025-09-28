@@ -13,7 +13,7 @@
     "topic.prefix": "mysql-cdc",
 
     "database.include.list": "${MYSQL_DATABASE}",
-    "table.include.list": "${MYSQL_DATABASE}.user_mcp",
+    "table.include.list": "${MYSQL_DATABASE}.user_mcp,${MYSQL_DATABASE}.member",
 
     "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
     "schema.history.internal.kafka.topic": "schema-history-db-events",

@@ -1,0 +1,21 @@
+{
+  "name": "elasticsearch-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+    "tasks.max": "1",
+
+    "topics": "mysql-cdc.${MYSQL_DATABASE}.member",
+
+    "connection.url": "http://${ES_HOST}:${ES_INNER_PORT}",
+
+    "key.ignore": "true",
+    "schema.ignore": "true",
+
+    "behavior.on.null.values": "delete",
+
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.delete.handling.mode": "rewrite"
+  }
+}

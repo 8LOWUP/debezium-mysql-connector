@@ -1,0 +1,17 @@
+{
+  "name": "redis-sink",
+  "config": {
+    "connector.class": "com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector",
+    "tasks.max": "1",
+    "topics": "mysql-cdc.${MYSQL_DATABASE}.member",
+    "redis.hosts": "${REDIS_HOST}:${REDIS_INNER_PORT}",
+    "redis.database": "0",
+    "redis.password": "${REDIS_PASSWORD}",
+    "redis.type": "hash",
+    "redis.key": "??",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true"
+  }
+}
