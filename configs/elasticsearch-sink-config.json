@@ -4,7 +4,7 @@
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
 
-    "topics": "mysql-cdc.${MYSQL_DATABASE}.member",
+    "topics": "mysql-cdc.${MYSQL_DATABASE_MEMBER}.member",
 
     "connection.url": "http://${ES_HOST}:${ES_INNER_PORT}",
 

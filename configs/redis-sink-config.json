@@ -3,7 +3,7 @@
   "config": {
     "connector.class": "com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector",
     "tasks.max": "1",
-    "topics": "mysql-cdc.${MYSQL_DATABASE}.member",
+    "topics": "mysql-cdc.${MYSQL_DATABASE_MEMBER}.member,mysql-cdc.${MYSQL_DATABASE_MCP}.mcp",
     "redis.hosts": "${REDIS_HOST}:${REDIS_INNER_PORT}",
     "redis.database": "0",
     "redis.password": "${REDIS_PASSWORD}",
