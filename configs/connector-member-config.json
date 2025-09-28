@@ -1,26 +1,24 @@
 {
-  "name": "my-mysql-cdc-connector",
+  "name": "mysql-cdc-member",
   "config": {
     "connector.class": "io.debezium.connector.mysql.MySqlConnector",
     "tasks.max": "1",
+    "database.hostname": "${MYSQL_HOST_MEMBER}",
+    "database.port": "${MYSQL_PORT_MEMBER}",
+    "database.user": "${MYSQL_USER_MEMBER}",
+    "database.password": "${MYSQL_PASSWORD_MEMBER}",
 
-    "database.hostname": "${MYSQL_HOST}",
-    "database.port": "${MYSQL_INNER_PORT}",
-    "database.user": "${MYSQL_USER}",
-    "database.password": "${MYSQL_PASSWORD}",
+    "database.server.id": "184055",
+    "topic.prefix": "mysql-cdc-member",
 
-    "database.server.id": "184054",
-    "topic.prefix": "mysql-cdc",
-
-    "database.include.list": "${MYSQL_DATABASE}",
-    "table.include.list": "${MYSQL_DATABASE}.user_mcp,${MYSQL_DATABASE}.member",
+    "database.include.list": "${MYSQL_DATABASE_MEMBER}",
+    "table.include.list": "${MYSQL_DATABASE_MEMBER}.member",
 
     "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
-    "schema.history.internal.kafka.topic": "schema-history-db-events",
+    "schema.history.internal.kafka.topic": "schema-history-member-events",
 
     "transforms": "unwrap",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
-    "transforms.unwrap.add.fields": "op",
     "transforms.unwrap.drop.tombstones": "true",
     "transforms.unwrap.delete.handling.mode": "rewrite",
 
