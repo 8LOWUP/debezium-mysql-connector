@@ -72,7 +72,7 @@ register_connector() {
 
     if [[ "$HTTP_CODE" =~ ^2 ]]; then
       echo "[register] Connector config updated successfully."
-      echo "$HTTP_BODY" | jq '.name,.config|keys' || true
+      echo "$HTTP_BODY" | jq '.' || true
     else
       echo "[ERROR] Failed to update connector. Kafka Connect returned status $HTTP_CODE."
       echo "[ERROR] Response: $HTTP_BODY"
@@ -89,7 +89,7 @@ register_connector() {
 
     if [[ "$HTTP_CODE" =~ ^2 ]]; then
       echo "[register] Connector created successfully."
-      echo "$HTTP_BODY" | jq '.name,.config|keys' || true
+      echo "$HTTP_BODY" | jq '.' || true
     else
       echo "[ERROR] Failed to create connector. Kafka Connect returned status $HTTP_CODE."
       echo "[ERROR] Response: $HTTP_BODY"
