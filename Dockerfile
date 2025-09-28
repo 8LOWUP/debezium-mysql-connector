@@ -24,7 +24,7 @@ RUN mkdir -p /opt/kafka-plugins && \
     \
     # Debezium 스크립팅(Filter Transform) 모듈 추가 설치
     curl -L https://repo1.maven.org/maven2/io/debezium/debezium-scripting/2.7.0.Final/debezium-scripting-2.7.0.Final.jar \
-        -o /opt/kafka-plugins/debezium-connector-mysql/debezium-scripting-2.7.0.Final.jar && \
+        -o /opt/kafka-plugins/juel-engine/debezium-scripting-2.7.0.Final.jar && \
     \
     # JUEL 스크립팅 엔진 설치 (Filter Transform 용)
     mkdir -p /opt/kafka-plugins/juel-engine && \
