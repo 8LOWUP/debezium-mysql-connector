@@ -25,7 +25,7 @@
     "transforms.unwrap.delete.handling.mode": "rewrite",
 
     "transforms.dropUpdates.type": "io.debezium.transforms.Filter",
-    "transforms.dropUpdates.language": "juel",
+    "transforms.dropUpdates.language": "jsr223.juel",
     "transforms.dropUpdates.condition": "value.op == 'u'",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
