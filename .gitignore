@@ -16,6 +16,8 @@
 *.class
 *.war
 *.zip
+!elasticsearch.zip
+!redis.zip
 
 # Operating System files
 .DS_Store # macOS

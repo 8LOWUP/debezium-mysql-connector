@@ -4,21 +4,21 @@ services:
     container_name: mysql-mcp-market-local
     image: mysql:8.0
     ports:
-      - target: ${MYSQL_INNER_PORT}
-        published: ${MYSQL_OUTER_PORT}
+      - target: ${MYSQL_INNER_PORT_MEMBER}
+        published: ${MYSQL_OUTER_PORT_MEMBER}
         protocol: tcp
         host_ip: 0.0.0.0
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE_MEMBER}
+      - MYSQL_USER=${MYSQL_USER_MEMBER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD_MEMBER}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD_MEMBER}
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d
     networks:
       mm_local_network:
-        ipv4_address: ${NETWORK_MYSQL_IP}
+        ipv4_address: ${NETWORK_MYSQL_IP_MEMBER}
     restart: always
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -124,6 +124,28 @@ services:
     networks:
       mm_local_network:
         ipv4_address: ${NETWORK_KAFKA_CONNECT_IP}
+
+  elasticsearch:
+    container_name: elasticsearch-mcp-market-local
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - target: ${ES_INNER_PORT}
+        published: ${ES_OUTER_PORT}
+        protocol: tcp
+        host_ip: 0.0.0.0
+    networks:
+      mm_local_network:
+        ipv4_address: ${NETWORK_ES_IP}
+    restart: always
 
 networks:
   mm_local_network:

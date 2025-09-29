@@ -118,5 +118,5 @@ register_connector() {
 register_connector /etc/kafka-connect/connector-mcp-config.json
 register_connector /etc/kafka-connect/connector-member-config.json
 register_connector /etc/kafka-connect/mongo-sink-config.json
-register_connector /etc/kafka-connect/redis-sink-config.json
-register_connector /etc/kafka-connect/elasticsearch-sink-config.json
+#register_connector /etc/kafka-connect/redis-sink-config.json
+#register_connector /etc/kafka-connect/elasticsearch-sink-config.json
