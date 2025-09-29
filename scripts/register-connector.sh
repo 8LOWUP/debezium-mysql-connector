@@ -60,43 +60,58 @@ register_connector() {
     sleep 3
   done
 
-  # 6) 이미 존재하면 업데이트, 없으면 생성
-  STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$CONNECT_URL/connectors/$CONNECTOR_NAME")
-  if [ "$STATUS" = "200" ]; then
-    echo "[register] Connector '$CONNECTOR_NAME' exists. Updating config via PUT..."
-    RESPONSE=$(jq '.config' "$TMP_FILE" | curl -s -w "\n%{http_code}" -X PUT -H "Content-Type: application/json" \
-      --data @- \
-      "$CONNECT_URL/connectors/$CONNECTOR_NAME/config")
-    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-    HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+  # 6) 커넥터 생성/업데이트 (최대 3번 시도)
+  for i in {1..3}
+  do
+    echo "[register] 커넥터 '$CONNECTOR_NAME' 등록 시도 ($i/3)..."
 
-    if [[ "$HTTP_CODE" =~ ^2 ]]; then
-      echo "[register] Connector config updated successfully."
-      echo "$HTTP_BODY" | jq '.' || true
+    # 6-1) 커넥터 존재 여부 확인
+    STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$CONNECT_URL/connectors/$CONNECTOR_NAME")
+
+    if [ "$STATUS" = "200" ]; then
+      # 6-2a) 존재하면 업데이트
+      echo "[register] 커넥터 '$CONNECTOR_NAME'가 존재합니다. 설정을 업데이트합니다 (PUT)..."
+      RESPONSE=$(jq '.config' "$TMP_FILE" | curl -s -w "\n%{http_code}" -X PUT -H "Content-Type: application/json" \
+        --data @- \
+        "$CONNECT_URL/connectors/$CONNECTOR_NAME/config")
+      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+      HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+
+      if [[ "$HTTP_CODE" =~ ^2 ]]; then
+        echo "[register] 커넥터 설정이 성공적으로 업데이트되었습니다."
+        echo "$HTTP_BODY" | jq '.' || true
+        break  # 성공 시 루프 종료
+      else
+        echo "[WARN] ($i/3) 커넥터 업데이트 실패. Kafka Connect가 상태 코드 $HTTP_CODE 를 반환했습니다."
+        echo "[WARN] 응답: $HTTP_BODY"
+      fi
     else
-      echo "[ERROR] Failed to update connector. Kafka Connect returned status $HTTP_CODE."
-      echo "[ERROR] Response: $HTTP_BODY"
+      # 6-2b) 없으면 생성
+      echo "[register] 커넥터 '$CONNECTOR_NAME'를 생성합니다 (POST)..."
+      RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" \
+        --data @"$TMP_FILE" \
+        "$CONNECT_URL/connectors")
+      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+      HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+
+      if [[ "$HTTP_CODE" =~ ^2 ]]; then
+        echo "[register] 커넥터가 성공적으로 생성되었습니다."
+        echo "$HTTP_BODY" | jq '.' || true
+        break  # 성공 시 루프 종료
+      else
+        echo "[WARN] ($i/3) 커넥터 생성 실패. Kafka Connect가 상태 코드 $HTTP_CODE 를 반환했습니다."
+        echo "[WARN] 응답: $HTTP_BODY"
+      fi
+    fi
+
+    if [ "$i" -lt 3 ]; then
+      echo "[register] 30초 후 재시도합니다..."
+      sleep 30
+    else
+      echo "[ERROR] 3번의 시도 후에도 커넥터 '$CONNECTOR_NAME' 등록에 실패했습니다."
       exit 1
     fi
-    echo "[register] Update request sent."
-  else
-    echo "[register] Creating connector '$CONNECTOR_NAME' via POST..."
-    RESPONSE=$(curl -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" \
-      --data @"$TMP_FILE" \
-      "$CONNECT_URL/connectors")
-    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-    HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
-
-    if [[ "$HTTP_CODE" =~ ^2 ]]; then
-      echo "[register] Connector created successfully."
-      echo "$HTTP_BODY" | jq '.' || true
-    else
-      echo "[ERROR] Failed to create connector. Kafka Connect returned status $HTTP_CODE."
-      echo "[ERROR] Response: $HTTP_BODY"
-      exit 1
-    fi
-    echo "[register] Create request sent."
-  fi
+  done
 }
 
 # 여러 커넥터 등록
