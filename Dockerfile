@@ -8,22 +8,21 @@ COPY scripts/register-connector.sh /scripts/register-connector.sh
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /scripts/register-connector.sh /docker-entrypoint.sh
 
-# 플러그인 경로
-ENV CONNECT_PLUGIN_PATH=/opt/kafka-plugins
+
 
 # 유틸
 RUN yum install -y curl jq gettext unzip && yum clean all
 
-# --- 로컬 플러그인 설치 ---
-# 로컬에 미리 다운로드한 플러그인 파일을 이미지에 복사
-COPY confluentinc-kafka-connect-elasticsearch-15.0.1.zip /tmp/elasticsearch.zip
-COPY jcustenborder-kafka-connect-redis-0.0.8.zip /tmp/redis.zip
-
+# --- Confluent Hub 및 직접 다운로드를 통해 플러그인 설치 ---
 RUN set -eux; \
-    mkdir -p /opt/kafka-plugins; \
-    unzip -q /tmp/elasticsearch.zip -d /opt/kafka-plugins; \
-    unzip -q /tmp/redis.zip -d /opt/kafka-plugins; \
-    rm -f /tmp/elasticsearch.zip /tmp/redis.zip
+    echo "Installing connectors..."; \
+    # Elasticsearch connector from Confluent Hub
+    confluent-hub install confluentinc/kafka-connect-elasticsearch:15.0.1 --no-prompt; \
+    # Redis connector from GitHub releases
+    curl -fSL --retry 5 "https://github.com/redis-field-engineering/redis-kafka-connect/releases/download/v0.9.1/redis-redis-kafka-connect-0.9.1.zip" -o /tmp/redis.zip; \
+    unzip -q /tmp/redis.zip -d /opt/kafka-plugins/; \
+    rm -f /tmp/redis.zip
+
 
 # --- 기존 플러그인 설치 ---
 # Debezium MySQL (2.7.0.Final)
@@ -41,6 +40,7 @@ RUN set -eux; \
       https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.15.0/mongo-kafka-connect-1.15.0-all.jar \
       -o /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar; \
     test -s /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar
+
 
 USER appuser
 ENTRYPOINT ["/docker-entrypoint.sh"]

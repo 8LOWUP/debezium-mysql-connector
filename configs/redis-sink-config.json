@@ -1,17 +1,32 @@
 {
   "name": "redis-sink",
   "config": {
-    "connector.class": "com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector",
+    "connector.class": "com.redis.kafka.connect.RedisSinkConnector",
     "tasks.max": "1",
-    "topics": "mysql-cdc.${MYSQL_DATABASE_MEMBER}.member,mysql-cdc.${MYSQL_DATABASE_MCP}.mcp",
-    "redis.hosts": "${REDIS_HOST}:${REDIS_INNER_PORT}",
-    "redis.database": "0",
-    "redis.password": "${REDIS_PASSWORD}",
-    "redis.type": "hash",
-    "redis.key": "??",
+    "topics": "mysql-cdc.${MYSQL_DATABASE_MEMBER}.member",
+    "redis.uri": "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_INNER_PORT}/0",
+    "redis.type": "SET",
+    "redis.key.ttl": "10",
+
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "true",
+    "key.converter.schemas.enable": "false",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "true"
+    "value.converter.schemas.enable": "false",
+
+    "transforms": "unwrap,keyFromValue,addPrefix,extractNickname",
+
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.add.fields": "op",
+    "transforms.unwrap.drop.tombstones": "false",
+
+    "transforms.keyFromValue.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.keyFromValue.fields": "id",
+
+    "transforms.addPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.addPrefix.regex": "(.*)",
+    "transforms.addPrefix.replacement": "cached_member:$1",
+
+    "transforms.extractNickname.type": "org.apache.kafka.connect.transforms.ExtractField$Value",
+    "transforms.extractNickname.field": "nickname"
   }
 }
