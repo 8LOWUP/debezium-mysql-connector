@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+sleep 10
 set -euo pipefail
 
 # 0) 환경
@@ -19,7 +20,7 @@ register_connector() {
   # 2) envsubst 로 치환
   local TMP_FILE="/tmp/$(basename "$CONFIG_FILE").resolved.json"
   echo "[register] Resolving env vars in $CONFIG_FILE -> $TMP_FILE"
-  vars=$(grep -o '\${[A-Z_]*\}' "$CONFIG_FILE" | sed 's/\${\(.*\)}/$\1/g' | tr '\n' ' ')
+  vars=$(grep -o '\${[A-Z0-9_]\+}' "$CONFIG_FILE" | sed 's/\${\(.*\)}/$\1/g' | tr '\n' ' ')
   envsubst "$vars" < "$CONFIG_FILE" > "$TMP_FILE"
 
   # 3) 미치환 변수(예: ${FOO})가 남았는지 검사 (실수 방지)
@@ -118,5 +119,5 @@ register_connector() {
 register_connector /etc/kafka-connect/connector-mcp-config.json
 register_connector /etc/kafka-connect/connector-member-config.json
 register_connector /etc/kafka-connect/mongo-sink-config.json
-#register_connector /etc/kafka-connect/redis-sink-config.json
-#register_connector /etc/kafka-connect/elasticsearch-sink-config.json
+register_connector /etc/kafka-connect/redis-sink-config.json
+register_connector /etc/kafka-connect/elasticsearch-sink-config.json
