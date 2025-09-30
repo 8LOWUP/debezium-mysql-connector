@@ -12,7 +12,7 @@
     "database.include.list": "${MYSQL_DATABASE_MCP}",
     "table.include.list": "${MYSQL_DATABASE_MCP}.user_mcp",
     "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
-    "schema.history.internal.kafka.topic": "schema-history-db-events",
+    "schema.history.internal.kafka.topic": "schema-history-mcp-events",
     "transforms": "unwrap",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.add.fields": "op",
