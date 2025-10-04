@@ -3,30 +3,31 @@
   "config": {
     "connector.class": "com.redis.kafka.connect.RedisSinkConnector",
     "tasks.max": "1",
-    "topics": "mysql-cdc.${MYSQL_DATABASE_MEMBER}.member",
+    "topics": "mysql-cdc-member.${MYSQL_DATABASE_MEMBER}.member",
     "redis.uri": "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_INNER_PORT}/0",
-    "redis.type": "SET",
-    "redis.key.ttl": "10",
+    "redis.command": "SET",
+    "redis.keyspace": "cached_member:",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "false",
 
-    "transforms": "unwrap,keyFromValue,addPrefix,extractNickname",
+    "transforms": "unwrap,extractNickname,extractKey,addPrefix",
 
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
-    "transforms.unwrap.add.fields": "op",
-    "transforms.unwrap.drop.tombstones": "false",
-
-    "transforms.keyFromValue.type": "org.apache.kafka.connect.transforms.ValueToKey",
-    "transforms.keyFromValue.fields": "id",
-
-    "transforms.addPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
-    "transforms.addPrefix.regex": "(.*)",
-    "transforms.addPrefix.replacement": "cached_member:$1",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.drop.tombstones": "true",
 
     "transforms.extractNickname.type": "org.apache.kafka.connect.transforms.ExtractField$Value",
-    "transforms.extractNickname.field": "nickname"
+    "transforms.extractNickname.field": "nickname",
+
+    "transforms.extractKey.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.extractKey.field": "id",
+
+    "transforms.addPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.addPrefix.regex": ".*",
+    "transforms.addPrefix.replacement": "cached_member",
+
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
   }
 }
