@@ -15,13 +15,19 @@
     "schema.ignore": "true",
     "behavior.on.null.values": "delete",
 
-    "transforms": "extractKey,unwrap",
+    "transforms": "extractKey,unwrap,route",
+
+    "flush.synchronously": "true",
 
     "transforms.extractKey.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
     "transforms.extractKey.field": "id",
 
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.drop.tombstones": "true",
-    "transforms.unwrap.delete.handling.mode": "rewrite"
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": ".*",
+    "transforms.route.replacement": "member"
   }
 }
