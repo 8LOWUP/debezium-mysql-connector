@@ -1,0 +1,33 @@
+{
+  "name": "mysql-cdc-member",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "${MYSQL_HOST_MEMBER}",
+    "database.port": "${MYSQL_INNER_PORT_MEMBER}",
+    "database.user": "${MYSQL_USER_MEMBER}",
+    "database.password": "${MYSQL_PASSWORD_MEMBER}",
+    "database.server.id": "184055",
+    "topic.prefix": "mysql-cdc-member",
+    "database.include.list": "${MYSQL_DATABASE_MEMBER}",
+    "table.include.list": "${MYSQL_DATABASE_MEMBER}.member",
+    "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
+    "schema.history.internal.kafka.topic": "schema-history-member-events",
+
+    "transforms": "unwrap,filterCreate",
+
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.add.fields": "op",
+    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+
+    "transforms.filterCreate.type": "io.debezium.transforms.Filter",
+    "transforms.filterCreate.language": "jsr223.groovy",
+    "transforms.filterCreate.condition": "value.schema().field('__op') == null || value.__op != 'c'",
+
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

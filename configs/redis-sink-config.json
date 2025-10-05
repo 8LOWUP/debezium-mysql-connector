@@ -1,0 +1,29 @@
+{
+  "name": "redis-sink",
+  "config": {
+    "connector.class": "com.redis.kafka.connect.RedisSinkConnector",
+    "tasks.max": "1",
+    "topics": "mysql-cdc-member.${MYSQL_DATABASE_MEMBER}.member",
+    "redis.uri": "redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_INNER_PORT}/0",
+    "redis.command": "SET",
+    "redis.keyspace": "cached_member:",
+
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter.schemas.enable": "false",
+
+    "transforms": "unwrap,extractKey,addPrefix",
+
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.drop.tombstones": "true",
+
+    "transforms.extractKey.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.extractKey.field": "id",
+
+    "transforms.addPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.addPrefix.regex": ".*",
+    "transforms.addPrefix.replacement": "cached_member"
+  }
+}

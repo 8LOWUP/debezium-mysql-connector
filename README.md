@@ -32,6 +32,15 @@ Kafka Connect 커넥터 설정은 Git으로 관리되며, 테이블 추가/변�
 
 ---
 
+## CDC 역할
+
+1. **✅MCP 도메인의 유저 소유 MCP 목록을 Workspace 에 동기화 (생성, 변경, 삭제)**
+2. **✅Member 도메인에서 멤버 생성 시, elasticsearch 에 저장되는 키워드 동기화 (변경, 삭제)**
+3. **✅Member 도메인에서 멤버 정보 변경 시, redis 의 cache table 동기화 (변경, 삭제)**
+4. **MCP 도메인에서 새로운 MCP 생성, 설명 또는 카테고리 변경, 삭제 시, (추천 알고리즘에 사용할) mongoDB에 벡터 데이터 동기화 (생성, 변경, 삭제)**
+
+---
+
 ## 참고 문서
 - [MySQL Source Connector 설정 가이드](./docs/MySQL%20Source%20Connector%20설정%20가이드.md)
 - [MongoDB Sink Connector 설정 가이드](./docs/MongoDB%20Sink%20Connector%20설정%20가이드.md)

@@ -16,6 +16,8 @@
 *.class
 *.war
 *.zip
+!elasticsearch.zip
+!redis.zip
 
 # Operating System files
 .DS_Store # macOS
@@ -27,3 +29,6 @@ Thumbs.db # Windows
 
 db-data/
 mongo-data/
+
+# SMT JARs
+!/dependencies/*.jar
