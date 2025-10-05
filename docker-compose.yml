@@ -81,7 +81,7 @@ services:
     restart: always
 
   connect:
-    # image: my-registry/kafka-connect:2.7.0   # 우리가 빌드한 이미지 사용
+    # image: my-registry/kafka-connect:2.7.0   # DEPRECATED: 현재는 Dockerfile 을 통해 컨테이너 생성하도록 되어 있음
     build:
       context: .          # 현재 디렉토리의 Dockerfile 사용
       dockerfile: Dockerfile
@@ -103,6 +103,7 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      ENABLE_DEBEZIUM_SCRIPTING: "true"
 
       # (선택) register 스크립트용 변수
       CONNECT_URL: http://localhost:8083

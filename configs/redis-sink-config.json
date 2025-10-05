@@ -10,24 +10,20 @@
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter.schemas.enable": "false",
 
-    "transforms": "unwrap,extractNickname,extractKey,addPrefix",
+    "transforms": "unwrap,extractKey,addPrefix",
 
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.delete.handling.mode": "rewrite",
     "transforms.unwrap.drop.tombstones": "true",
-
-    "transforms.extractNickname.type": "org.apache.kafka.connect.transforms.ExtractField$Value",
-    "transforms.extractNickname.field": "nickname",
 
     "transforms.extractKey.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
     "transforms.extractKey.field": "id",
 
     "transforms.addPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
     "transforms.addPrefix.regex": ".*",
-    "transforms.addPrefix.replacement": "cached_member",
-
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+    "transforms.addPrefix.replacement": "cached_member"
   }
 }

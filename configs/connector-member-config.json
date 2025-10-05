@@ -13,11 +13,18 @@
     "table.include.list": "${MYSQL_DATABASE_MEMBER}.member",
     "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
     "schema.history.internal.kafka.topic": "schema-history-member-events",
-    "transforms": "unwrap",
+
+    "transforms": "unwrap,filterCreate",
+
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.add.fields": "op",
     "transforms.unwrap.drop.tombstones": "true",
     "transforms.unwrap.delete.handling.mode": "rewrite",
+
+    "transforms.filterCreate.type": "io.debezium.transforms.Filter",
+    "transforms.filterCreate.language": "jsr223.groovy",
+    "transforms.filterCreate.condition": "value.schema().field('__op') == null || value.__op != 'c'",
+
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",

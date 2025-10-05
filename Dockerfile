@@ -41,6 +41,9 @@ RUN set -eux; \
       -o /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar; \
     test -s /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar
 
+# Copy custom SMT JARs into the existing mysql connector directory
+COPY dependencies/*.jar /opt/kafka-plugins/debezium-connector-mysql/
+
 
 USER appuser
 ENTRYPOINT ["/docker-entrypoint.sh"]
