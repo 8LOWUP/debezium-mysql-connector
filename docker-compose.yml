@@ -116,8 +116,10 @@ services:
     volumes:
       # Source Connector
       - ./configs/connector-mcp-config.json:/etc/kafka-connect/connector-mcp-config.json
+      - ./configs/connector-mcp-mcp_url-config.json:/etc/kafka-connect/connector-mcp-mcp_url-config.json
       - ./configs/connector-member-config.json:/etc/kafka-connect/connector-member-config.json
       # Mongo Sink Connector
+      - ./configs/mongo-sink-mcpUrl-config.json:/etc/kafka-connect/mongo-sink-mcpUrl-config.json
       - ./configs/mongo-sink-config.json:/etc/kafka-connect/mongo-sink-config.json
       - ./configs/redis-sink-config.json:/etc/kafka-connect/redis-sink-config.json
       - ./configs/elasticsearch-sink-config.json:/etc/kafka-connect/elasticsearch-sink-config.json

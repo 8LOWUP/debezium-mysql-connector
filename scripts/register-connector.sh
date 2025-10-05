@@ -118,6 +118,8 @@ register_connector() {
 # 여러 커넥터 등록
 register_connector /etc/kafka-connect/connector-mcp-config.json
 register_connector /etc/kafka-connect/connector-member-config.json
+register_connector /etc/kafka-connect/connector-mcp-mcp_url-config.json
 register_connector /etc/kafka-connect/mongo-sink-config.json
 register_connector /etc/kafka-connect/redis-sink-config.json
 register_connector /etc/kafka-connect/elasticsearch-sink-config.json
+register_connector /etc/kafka-connect/mongo-sink-mcpUrl-config.json

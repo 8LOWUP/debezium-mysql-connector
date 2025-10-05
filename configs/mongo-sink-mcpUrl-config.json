@@ -1,0 +1,37 @@
+{
+  "name": "mongo-sink-mcp-url",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+
+    "topics": "mysql-cdc.${MYSQL_DATABASE_MCP}.mcp",
+
+    "connection.uri": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_INNER_PORT}/${MONGODB_DATABASE}?authSource=admin",
+    "database": "${MONGODB_DATABASE}",
+    "collection": "mcpUrl",
+
+    "deletes.enabled": "true",
+
+    "post.processor.chain": "com.mongodb.kafka.connect.sink.processor.DocumentIdAdder",
+    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
+    "document.id.strategy.partial.value.projection.type": "AllowList",
+    "document.id.strategy.partial.value.projection.list": "mcpId",
+
+    "writemodel.strategy": "com.mongodb.kafka.connect.sink.writemodel.strategy.ReplaceOneDefaultStrategy",
+
+    "transforms": "rename,cast,only",
+
+    "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.rename.renames": "id:mcpId,request_url:mcpUrl",
+
+    "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast$Value",
+    "transforms.cast.spec": "mcpId:string,mcpUrl:string",
+
+    "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.only.whitelist": "mcpId,mcpUrl,__deleted,op",
+
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true"
+  }
+}
