@@ -29,3 +29,6 @@ Thumbs.db # Windows
 
 db-data/
 mongo-data/
+
+# SMT JARs
+!/dependencies/*.jar
