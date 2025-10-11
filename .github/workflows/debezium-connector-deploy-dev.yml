@@ -50,7 +50,7 @@ jobs:
 
       - name: Copy configs directory to VM
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "mkdir -p /app/compose"
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "sudo mkdir -p /app/compose && sudo chown ubuntu:ubuntu /app/compose"
           scp -o StrictHostKeyChecking=no -r ./configs ubuntu@${{ secrets.EC2_HOST }}:/app/compose/
 
   trigger-gateway-deploy:
