@@ -9,7 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     outputs:
-      service: ${{ github.event.repository.name }}
       tag: ${{ github.sha }}
     steps:
       # 코드 체크아웃 (서브 묘듈 포함)
@@ -57,7 +56,7 @@ jobs:
     needs: [build-and-deploy, copy-configs]
     uses: 8LOWUP/spring-api-gateway-devonly/.github/workflows/mcp-market-reusable-dev.yml@main
     with:
-      service: ${{ needs.build-and-deploy.outputs.service }}
+      service: 'connect'
       tag: ${{ needs.build-and-deploy.outputs.tag }}
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
