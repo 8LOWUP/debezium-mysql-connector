@@ -3,9 +3,9 @@
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
 
-    "topics": "mysql-cdc.${MYSQL_DATABASE_MCP}.mcp",
+    "topics": "mysql-cdc.${MYSQL_DATABASE}.mcp",
 
-    "connection.uri": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_INNER_PORT}/${MONGODB_DATABASE}?authSource=admin",
+    "connection.uri": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/${MONGODB_DATABASE}?authSource=admin",
     "database": "${MONGODB_DATABASE}",
     "collection": "mcpUrl",
 
