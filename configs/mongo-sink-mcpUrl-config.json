@@ -11,11 +11,6 @@
 
     "deletes.enabled": "true",
 
-    "post.processor.chain": "com.mongodb.kafka.connect.sink.processor.DocumentIdAdder",
-    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
-    "document.id.strategy.partial.value.projection.type": "AllowList",
-    "document.id.strategy.partial.value.projection.list": "mcpId",
-
     "writemodel.strategy": "com.mongodb.kafka.connect.sink.writemodel.strategy.ReplaceOneDefaultStrategy",
 
     "transforms": "rename,cast,only",
