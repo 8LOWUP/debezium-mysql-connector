@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-sleep 10
+sleep 30
 set -euo pipefail
 
 # 0) 환경
