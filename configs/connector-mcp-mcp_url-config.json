@@ -10,7 +10,7 @@
     "database.password": "${MYSQL_PASSWORD}",
     "database.server.id": "184056",
 
-    "topic.prefix": "mysql-cdc",
+    "topic.prefix": "mysql-cdc-mcpUrl",
     "database.include.list": "${MYSQL_DATABASE}",
     "table.include.list": "${MYSQL_DATABASE}.mcp",
 
