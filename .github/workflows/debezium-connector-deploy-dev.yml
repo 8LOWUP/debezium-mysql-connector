@@ -62,3 +62,4 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       KCR_HOST: ${{ secrets.KCR_HOST }}
       EC2_HOST: ${{ secrets.EC2_HOST }}
+
