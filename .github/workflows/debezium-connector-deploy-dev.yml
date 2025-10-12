@@ -51,7 +51,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "sudo mkdir -p /app/compose && sudo chown ubuntu:ubuntu /app/compose"
           scp -o StrictHostKeyChecking=no -r ./configs ubuntu@${{ secrets.EC2_HOST }}:/app/compose/
-          scp -o StrictHostKeyChecking=no -r ./mysql ubuntu @${{ secrets.EC2_HOST }}:/app/compose/
+          scp -o StrictHostKeyChecking=no -r ./mysql ubuntu@${{ secrets.EC2_HOST }}:/app/compose/
 
   trigger-gateway-deploy:
     needs: [build-and-deploy, copy-configs]
