@@ -12,7 +12,7 @@ RUN chmod +x /docker-entrypoint.sh
 
 
 # 유틸
-RUN yum install -y curl jq gettext unzip && yum clean all
+RUN microdnf install -y curl jq gettext unzip && microdnf clean all
 
 # --- Confluent Hub 및 직접 다운로드를 통해 플러그인 설치 ---
 RUN set -eux; \
@@ -28,19 +28,19 @@ RUN set -eux; \
 # --- 기존 플러그인 설치 ---
 # Debezium MySQL (2.7.0.Final)
 RUN set -eux; \
-    curl -fSL --retry 5 --retry-connrefused --retry-delay 2 \
-      https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.7.0.Final/debezium-connector-mysql-2.7.0.Final-plugin.tar.gz \
-      -o /tmp/debezium-mysql.tar.gz; \
-    tar -xf /tmp/debezium-mysql.tar.gz -C /opt/kafka-plugins; \
-    rm -f /tmp/debezium-mysql.tar.gz
+#    curl -fSL --retry 5 --retry-connrefused --retry-delay 2 \
+#      https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.7.0.Final/debezium-connector-mysql-2.7.0.Final-plugin.tar.gz \
+#      -o /tmp/debezium-mysql.tar.gz; \
+#    tar -xf /tmp/debezium-mysql.tar.gz -C /opt/kafka-plugins; \
+#    rm -f /tmp/debezium-mysql.tar.gz
 
 # MongoDB Kafka Connector (1.15.0 uber JAR)
-RUN set -eux; \
-    mkdir -p /opt/kafka-plugins/mongo-connector; \
-    curl -fSL --retry 5 --retry-connrefused --retry-delay 2 \
-      https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.15.0/mongo-kafka-connect-1.15.0-all.jar \
-      -o /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar; \
-    test -s /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar
+#RUN set -eux; \
+#    mkdir -p /opt/kafka-plugins/mongo-connector; \
+#    curl -fSL --retry 5 --retry-connrefused --retry-delay 2 \
+#      https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.15.0/mongo-kafka-connect-1.15.0-all.jar \
+#      -o /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar; \
+#    test -s /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar
 
 # SMT를 debezium connector 에 적용하기 위한 파일 복사
 COPY dependencies/*.jar /opt/kafka-plugins/debezium-connector-mysql/
