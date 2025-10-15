@@ -27,7 +27,7 @@
     "transforms.cast.spec": "mcpId:string,mcpUrl:string",
 
     "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
-    "transforms.only.whitelist": "mcpId,mcpUrl,__deleted,op",
+    "transforms.only.whitelist": "mcpUrl,__deleted,op",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "true",
