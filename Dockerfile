@@ -6,7 +6,8 @@ USER root
 # 스크립트
 #COPY scripts/register-connector.sh /scripts/register-connector.sh # 필요 없으므로 주석 처리함
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /scripts/register-connector.sh /docker-entrypoint.sh
+#RUN chmod +x /scripts/register-connector.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 
 
