@@ -18,13 +18,13 @@
 
     "writemodel.strategy": "com.mongodb.kafka.connect.sink.writemodel.strategy.ReplaceOneDefaultStrategy",
 
-    "transforms": "rename,cast,only",
+    "transforms": "cast,rename,only",
+
+    "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast$Value",
+    "transforms.cast.spec": "id:string,request_url:string",
 
     "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
     "transforms.rename.renames": "id:mcpId,request_url:mcpUrl",
-
-    "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast$Value",
-    "transforms.cast.spec": "mcpId:string,mcpUrl:string",
 
     "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
     "transforms.only.whitelist": "mcpUrl,__deleted,op",
