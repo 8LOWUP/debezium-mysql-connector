@@ -17,7 +17,7 @@
     "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
     "transforms.rename.renames": "user_id:userId,mcp_id:mcpId,platform_id:platformId",
     "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
-    "transforms.only.whitelist": "userId,mcpId,platformId,__deleted,op",
+    "transforms.only.whitelist": "platformId,__deleted,op",
     "transforms.addField.type": "org.apache.kafka.connect.transforms.InsertField$Value",
     "transforms.addField.static.field": "mcpToken",
     "transforms.addField.static.value": "",
