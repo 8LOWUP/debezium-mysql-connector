@@ -1,10 +1,10 @@
-# Confluent Kafka Connect 기본 이미지 사용
-FROM confluentinc/cp-kafka-connect:7.4.0
+# develop 브랜치와는 다른 이미지 사용 (기본적인 플러그인 있는 버전)
+FROM debezium/connect:2.7.0.Final
 
 USER root
 
 # 스크립트
-COPY scripts/register-connector.sh /scripts/register-connector.sh
+#COPY scripts/register-connector.sh /scripts/register-connector.sh # 필요 없으므로 주석 처리함
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /scripts/register-connector.sh /docker-entrypoint.sh
 
@@ -41,7 +41,7 @@ RUN set -eux; \
       -o /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar; \
     test -s /opt/kafka-plugins/mongo-connector/mongo-kafka-connect-1.15.0-all.jar
 
-# Copy custom SMT JARs into the existing mysql connector directory
+# SMT를 debezium connector 에 적용하기 위한 파일 복사
 COPY dependencies/*.jar /opt/kafka-plugins/debezium-connector-mysql/
 
 
