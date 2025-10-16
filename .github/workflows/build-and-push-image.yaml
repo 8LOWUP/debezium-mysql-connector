@@ -23,24 +23,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 1. Docker Hub 로그인
-      - name: Login to Docker Hub
-        run: echo "${{ secrets.KCR_PASSWORD }}" | docker login ${{ secrets.KCR_HOST }} -u "${{ secrets.KCR_USER }}" --password-stdin
-
-      # 2. Docker Hub에서 init 이미지 Pull 및 Tag
-      - name: Pull and Tag Confluent Init Image
-        run: |
-          docker pull confluentinc/cp-server-connect-init:7.4.0
-          docker tag confluentinc/cp-server-connect-init:7.4.0 asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mcp-marcket-artifact-registry/cp-server-connect-init:7.4.0
-
-      # 3. Google Artifact Registry 인증 설정
-      - name: Configure Docker for Google Artifact Registry
-        run: gcloud auth configure-docker asia-northeast3-docker.pkg.dev
-
-      # 4. GAR로 init 이미지 Push
-      - name: Push Confluent Init Image to GAR
-        run: docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mcp-marcket-artifact-registry/cp-server-connect-init:7.4.0
-
       # 5. 커스텀 connect 이미지 빌드 및 GAR로 Push
       - name: Build and push application image
         uses: docker/build-push-action@v5
