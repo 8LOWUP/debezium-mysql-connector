@@ -27,6 +27,12 @@ jobs:
       - name: Configure Docker for Google Artifact Registry
         run: gcloud auth configure-docker asia-northeast3-docker.pkg.dev
 
+      - name: Pull, Tag, and Push Confluent Init Image
+        run: |
+          docker pull confluentinc/cp-server-connect-init:7.4.0
+          docker tag confluentinc/cp-server-connect-init:7.4.0 asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mcp-marcket-artifact-registry/cp-server-connect-init:7.4.0
+          docker push asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mcp-marcket-artifact-registry/cp-server-connect-init:7.4.0
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
