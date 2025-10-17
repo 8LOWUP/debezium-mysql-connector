@@ -3,7 +3,7 @@ name: Deploy Debezium Connector to Dev
 on:
   push:
     branches:
-      - develop
+      - prod
 
 jobs:
   build-and-deploy:
@@ -11,7 +11,7 @@ jobs:
     outputs:
       tag: ${{ github.sha }}
     steps:
-      # 코드 체크아웃 (서브 묘듈 포함)
+      # 코드 체크아웃 (서브묘듈 포함)
       - name: Checkout Code (with submodules)
         uses: actions/checkout@v3
         with:
@@ -28,10 +28,7 @@ jobs:
           IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-dev/connect
           TAG=${{ github.sha }}
 
-          # build with both tags
           docker build -t $IMAGE:$TAG -t $IMAGE:latest .
-
-          # push both tags
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest
 
@@ -45,21 +42,41 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
 
       - name: Copy configs and mysql directories to VM
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "sudo mkdir -p /app/compose && sudo chown ubuntu:ubuntu /app/compose"
-          scp -o StrictHostKeyChecking=no -r ./configs ubuntu@${{ secrets.EC2_HOST }}:/app/compose/
-          scp -o StrictHostKeyChecking=no -r ./mysql ubuntu@${{ secrets.EC2_HOST }}:/app/compose/
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.GCP_HOST }} "sudo mkdir -p /app/compose && sudo chown ubuntu:ubuntu /app/compose"
+          scp -o StrictHostKeyChecking=no -r ./configs ubuntu@${{ secrets.GCP_HOST }}:/app/compose/
+          scp -o StrictHostKeyChecking=no -r ./mysql ubuntu@${{ secrets.GCP_HOST }}:/app/compose/
 
-  trigger-gateway-deploy:
+  deploy:
+    runs-on: ubuntu-latest
     needs: [build-and-deploy, copy-configs]
-    uses: 8LOWUP/spring-api-gateway-devonly/.github/workflows/mcp-market-reusable-dev.yml@main
-    with:
-      service: 'connect'
-      tag: ${{ needs.build-and-deploy.outputs.tag }}
-    secrets:
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      KCR_HOST: ${{ secrets.KCR_HOST }}
-      EC2_HOST: ${{ secrets.EC2_HOST }}
+    steps:
+      # SSH 키 등록
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+
+      # 실제 배포 수행
+      - name: Deploy to Dev Server
+        run: |
+          SERVICE=connect
+          TAG=${{ needs.build-and-deploy.outputs.tag }}
+          IMAGE=${{ secrets.GCP_HOST }}/mcp-hub-backend-dev/$SERVICE:$TAG
+
+          echo "Re-deploying $SERVICE:$TAG (clean run)"
+
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.GCP_HOST }} "
+            SERVICE=$SERVICE &&
+            TAG=$TAG &&
+            IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-dev/\$SERVICE:\$TAG &&
+          
+            cd /home/app &&
+            docker compose --env-file docker-compose.prod.env down \$SERVICE &&
+            docker compose --env-file docker-compose.prod.env pull \$SERVICE &&
+            docker compose --env-file docker-compose.prod.env up -d --no-deps \$SERVICE &&
+            docker image prune -a -f
+          "
