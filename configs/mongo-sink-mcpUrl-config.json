@@ -2,7 +2,7 @@
   "name": "mongo-sink-mcp-url",
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
-    "topics": "mysql-cdc-mcpUrl.${MYSQL_DATABASE}.mcp",
+    "topics": "mysql-cdc-mcpUrl.mcpdb.mcp",
     "connection.uri": "mongodb+srv://workspace_db:kakao_workspace_mongo123@workspace-mongo-cluster.7fbnadz.mongodb.net/workspace?retryWrites=true&w=majority&appName=workspace-mongo-cluster",
     "database": "${MONGODB_DATABASE}",
     "collection": "mcpUrl",
