@@ -65,7 +65,7 @@ jobs:
         run: |
           SERVICE=connect
           TAG=${{ needs.build-and-deploy.outputs.tag }}
-          IMAGE=${{ secrets.GCP_HOST }}/mcp-hub-backend-prod/$SERVICE:$TAG
+          IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-prod/$SERVICE:$TAG
 
           echo "Re-deploying $SERVICE:$TAG (clean run)"
 
