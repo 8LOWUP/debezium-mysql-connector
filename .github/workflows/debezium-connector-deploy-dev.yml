@@ -25,7 +25,7 @@ jobs:
       # Docker 이미지 빌드 & KCR 푸시
       - name: Build & Push Docker Image
         run: |
-          IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-dev/connect
+          IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-prod/connect
           TAG=${{ github.sha }}
 
           docker build -t $IMAGE:$TAG -t $IMAGE:latest .
@@ -65,14 +65,14 @@ jobs:
         run: |
           SERVICE=connect
           TAG=${{ needs.build-and-deploy.outputs.tag }}
-          IMAGE=${{ secrets.GCP_HOST }}/mcp-hub-backend-dev/$SERVICE:$TAG
+          IMAGE=${{ secrets.GCP_HOST }}/mcp-hub-backend-prod/$SERVICE:$TAG
 
           echo "Re-deploying $SERVICE:$TAG (clean run)"
 
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.GCP_HOST }} "
             SERVICE=$SERVICE &&
             TAG=$TAG &&
-            IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-dev/\$SERVICE:\$TAG &&
+            IMAGE=${{ secrets.KCR_HOST }}/mcp-hub-backend-prod/\$SERVICE:\$TAG &&
           
             cd /home/app &&
             docker compose --env-file docker-compose.prod.env down \$SERVICE &&
