@@ -4,7 +4,7 @@
     "connector.class": "com.redis.kafka.connect.RedisSinkConnector",
     "tasks.max": "1",
     "topics": "mysql-cdc-member.${MYSQL_DATABASE}.member",
-    "redis.uri": "redis://:${REDIS_PASSWORD}@redis:6379/0",
+    "redis.uri": "redis://:${REDIS_PASSWORD}@10.124.81.3:6379/0",
     "redis.command": "SET",
     "redis.keyspace": "cached_member:",
 

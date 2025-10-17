@@ -3,14 +3,14 @@
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
-    "topics": "mysql-cdc-member.${MYSQL_DATABASE}.member",
+    "topics": "mysql-cdc-member.userdb.member",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "false",
 
-    "connection.url": "http://elasticsearch:9200",
+    "connection.url": "http://34.47.95.24:9200",
     "key.ignore": "false",
     "schema.ignore": "true",
     "behavior.on.null.values": "delete",

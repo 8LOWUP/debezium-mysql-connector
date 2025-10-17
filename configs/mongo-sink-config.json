@@ -2,8 +2,8 @@
   "name": "mongo-sink",
   "config": {
     "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
-    "topics": "mysql-cdc.${MYSQL_DATABASE}.user_mcp",
-    "connection.uri": "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/${MONGODB_DATABASE}?authSource=admin",
+    "topics": "mysql-cdc.mcpdb.user_mcp",
+    "connection.uri": "mongodb+srv://workspace_db:kakao_workspace_mongo123@workspace-mongo-cluster.7fbnadz.mongodb.net/workspace?retryWrites=true&w=majority&appName=workspace-mongo-cluster",
     "database": "${MONGODB_DATABASE}",
     "collection": "userMcp",
     "deletes.enabled": "true",

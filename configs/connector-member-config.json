@@ -9,8 +9,8 @@
     "database.password": "${MYSQL_PASSWORD}",
     "database.server.id": "184055",
     "topic.prefix": "mysql-cdc-member",
-    "database.include.list": "${MYSQL_DATABASE}",
-    "table.include.list": "${MYSQL_DATABASE}.member",
+    "database.include.list": "userdb",
+    "table.include.list": "userdb.member",
     "schema.history.internal.kafka.bootstrap.servers": "${KAFKA_BOOTSTRAP_SERVERS}",
     "schema.history.internal.kafka.topic": "schema-history-member-events",
 
