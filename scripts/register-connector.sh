@@ -20,8 +20,18 @@ register_connector() {
   # 2) envsubst 로 치환
   local TMP_FILE="/tmp/$(basename "$CONFIG_FILE").resolved.json"
   echo "[register] Resolving env vars in $CONFIG_FILE -> $TMP_FILE"
-  vars=$(grep -o '\${[A-Z0-9_]\+}' "$CONFIG_FILE" | sed 's/\${\(.*\)}/$\1/g' | tr '\n' ' ')
-  envsubst "$vars" < "$CONFIG_FILE" > "$TMP_FILE"
+
+  # 파일 내 ${VAR_NAME} 패턴 추출
+  vars=$(grep -o '\${[A-Z0-9_]\+}' "$CONFIG_FILE" | sed 's/\${\(.*\)}/$\1/g' | tr '\n' ' ' || true)
+
+  # envsubst 안전 처리
+  if [ -n "$vars" ]; then
+    echo "[register] envsubst 치환 변수: $vars"
+    envsubst "$vars" < "$CONFIG_FILE" > "$TMP_FILE"
+  else
+    echo "[register] 치환할 변수가 없습니다. 원본 파일을 그대로 사용합니다."
+    cp "$CONFIG_FILE" "$TMP_FILE"
+  fi
 
   # 3) 미치환 변수(예: ${FOO})가 남았는지 검사 (실수 방지)
   if grep -q '\${[^}]\+}' "$TMP_FILE"; then
@@ -31,7 +41,6 @@ register_connector() {
   fi
 
   echo "=== [register] Resolved config ==="
-  cat "$TMP_FILE" | sed 's/"/\\"/g' > /dev/null  # (보기용 echo 생략 가능)
   cat "$TMP_FILE"
 
   # 4) 커넥터 이름 추출 (치환된 파일 기준)
@@ -53,11 +62,6 @@ register_connector() {
       break
     fi
     echo "[register] Waiting for Kafka Connect REST API (Status: $HTTP_CODE)..."
-    echo "  -> Status Code: $HTTP_CODE"
-    echo "  -> Response Body:"
-    echo "$HTTP_BODY"
-    echo "  -> Raw curl output:"
-    echo "$RESPONSE"
     sleep 3
   done
 
@@ -83,7 +87,7 @@ register_connector() {
         echo "$HTTP_BODY" | jq '.' || true
         break  # 성공 시 루프 종료
       else
-        echo "[WARN] ($i/3) 커넥터 업데이트 실패. Kafka Connect가 상태 코드 $HTTP_CODE 를 반환했습니다."
+        echo "[WARN] ($i/3) 커넥터 업데이트 실패. 상태 코드: $HTTP_CODE"
         echo "[WARN] 응답: $HTTP_BODY"
       fi
     else
@@ -100,7 +104,7 @@ register_connector() {
         echo "$HTTP_BODY" | jq '.' || true
         break  # 성공 시 루프 종료
       else
-        echo "[WARN] ($i/3) 커넥터 생성 실패. Kafka Connect가 상태 코드 $HTTP_CODE 를 반환했습니다."
+        echo "[WARN] ($i/3) 커넥터 생성 실패. 상태 코드: $HTTP_CODE"
         echo "[WARN] 응답: $HTTP_BODY"
       fi
     fi
@@ -123,3 +127,4 @@ register_connector /etc/kafka-connect/mongo-sink-config.json
 register_connector /etc/kafka-connect/redis-sink-config.json
 register_connector /etc/kafka-connect/elasticsearch-sink-config.json
 register_connector /etc/kafka-connect/mongo-sink-mcpUrl-config.json
+register_connector /etc/kafka-connect/elasticsearch-sink-embedding-config.json

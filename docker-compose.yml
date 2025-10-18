@@ -118,11 +118,12 @@ services:
       - ./configs/connector-mcp-config.json:/etc/kafka-connect/connector-mcp-config.json
       - ./configs/connector-mcp-mcp_url-config.json:/etc/kafka-connect/connector-mcp-mcp_url-config.json
       - ./configs/connector-member-config.json:/etc/kafka-connect/connector-member-config.json
-      # Mongo Sink Connector
+      # Sink Connector
       - ./configs/mongo-sink-mcpUrl-config.json:/etc/kafka-connect/mongo-sink-mcpUrl-config.json
       - ./configs/mongo-sink-config.json:/etc/kafka-connect/mongo-sink-config.json
       - ./configs/redis-sink-config.json:/etc/kafka-connect/redis-sink-config.json
       - ./configs/elasticsearch-sink-config.json:/etc/kafka-connect/elasticsearch-sink-config.json
+      - ./configs/elasticsearch-sink-embedding-config.json:/etc/kafka-connect/elasticsearch-sink-embedding-config.json
       - ./local.env:/etc/local.env:ro
     networks:
       mm_local_network:
