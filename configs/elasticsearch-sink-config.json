@@ -6,25 +6,31 @@
     "topics": "mysql-cdc-mcpUrl.${MYSQL_DATABASE}.mcp",
 
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "false",
+    "key.converter.schemas.enable": "true",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "false",
+    "value.converter.schemas.enable": "true",
 
     "connection.url": "http://elasticsearch:9200",
     "key.ignore": "false",
     "schema.ignore": "true",
     "behavior.on.null.values": "delete",
 
-    "transforms": "extractKey,unwrap,route",
-
     "flush.synchronously": "true",
+
+    "errors.tolerance": "all",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true",
+
+    "transforms": "rename,only,extractKey,route",
+
+    "transforms.rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.rename.renames": "id:mcpId,name:title,description:content",
+
+    "transforms.only.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.only.whitelist": "mcpId,title,content",
 
     "transforms.extractKey.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
     "transforms.extractKey.field": "id",
-
-    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
-    "transforms.unwrap.drop.tombstones": "true",
-    "transforms.unwrap.delete.handling.mode": "rewrite",
 
     "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
     "transforms.route.regex": ".*",
